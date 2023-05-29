@@ -7,7 +7,7 @@ var LocalStorage = require("node-localstorage").LocalStorage,
 localStorage = new LocalStorage("./scratch");
 
 // Create a Client instance with our bot token.
-const bot = new eris.Client("MTEwODM5ODkxNjAxNTIzMDk4Ng.Grx9Xz.g0LgSZzA3hozrctXLGEqMnE9oN_yQEYbq3xEzo");
+const bot = new eris.Client("");
 
 // When the bot is connected and ready, log to console.
 bot.on("ready", () => {
@@ -22,19 +22,24 @@ bot.on("messageCreate", async (msg) => {
   let parameters = "";
 
   if (botWasMentioned) {
+    //clear parameters on start 
     msg.content.includes("start") ? clearParameters() : null;
+
     parameters = await getParameters(msg);
 
     try {
       console.log("parameters: " + parameters);
+      //If all parameters are present, start the test
       if (!parameters.includes("null")) {
         await msg.channel.createMessage("Starting the test...");
         startJob(parameters);
+        clearParameters();
       }
     } catch (err) {
       await msg.channel.createMessage("Failed to start the test.\n"+err);
       console.warn("Failed to respond to mention.");
       console.warn(err);
+      clearParameters();
     }
   }
 });
